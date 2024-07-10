@@ -3,6 +3,7 @@ import ListItem from "./listItem";
 
 const Home = () => {
 	const [ todo, setTodo ] = useState('')
+	const [ editedTodo, setEditedTodo ] = useState('')
 	const [ todos, setTodos ] = useState([])
 	const URL = 'https://playground.4geeks.com/todo'
 	const USER = 'kevinpadi'
@@ -14,7 +15,7 @@ const Home = () => {
 			setTodo('') 
 		}
 	}
-
+	
 	const handleDelete = (id) => {
 		deleteTodo(id)
 	}
@@ -67,7 +68,26 @@ const Home = () => {
 			return resp.json()
 		})
 		.catch(error => console.log(error))
-	
+	}
+
+	function editTodo(id, editedTodo) {
+		fetch(`${URL}/todos/${id}`, {
+			method: 'PUT',
+			body: JSON.stringify({
+				"label": editedTodo
+			}),
+			headers: {
+				"Content-Type": "application/json"
+			},
+
+		})
+		.then((resp) => {
+			if(resp.status === 200) {
+				getTodos()
+			}
+			return resp.json()
+		})
+		.catch(error => console.log(error))
 	}
 
 	function deleteTodo(id) {
@@ -98,7 +118,7 @@ const Home = () => {
 				</form>
 				<ul className="list-group">
 					{todos.length !== 0 ? todos.map((todo, index) =>
-						<ListItem key={todo.id} todo={todo} index={index} handleDelete={handleDelete} />
+						<ListItem key={todo.id} todo={todo} index={index} handleDelete={handleDelete} editTodo={editTodo} />
 					) : <label htmlFor="input" className="text-center py-3 fs-1">No hay tareas, añadir tareas</label>}
 				</ul>
 				<div>
